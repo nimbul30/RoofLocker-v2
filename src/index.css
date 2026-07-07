@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-navy: #163A56;       /* Confidence Navy */
+  --color-teal: #2E9CA6;       /* Coastal Teal */
+  --color-amber: #E89A35;      /* Signal Amber */
+  --color-deep-slate: #0F2B40; /* Deep Slate */
+  --color-ocean: #1E6E8C;      /* Ocean */
+  --color-burnt-amber: #C77A24;/* Burnt Amber */
+  --color-warm-paper: #F4F1EB; /* Warm Paper */
+  --color-mist: #D9E5E7;       /* Mist */
+  --color-stone-gray: #5C6066; /* Stone Gray */
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F4F1EB; /* Warm Paper */
+  color: #163A56;            /* Confidence Navy primary text */
+}
+
+/* Custom scrollbars for a neat look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
