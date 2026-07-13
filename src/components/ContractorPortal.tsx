@@ -31,6 +31,7 @@ export default function ContractorPortal() {
   const [deductibleEscrowed, setDeductibleEscrowed] = useState(true);
   const [contractGenerated, setContractGenerated] = useState(false);
   const [showContractPreview, setShowContractPreview] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   // Simulated live permit lookup results
   const [municipalSearch, setMunicipalSearch] = useState('Imlay Township');
@@ -291,7 +292,7 @@ export default function ContractorPortal() {
                   className="w-4 h-4 rounded border-slate-300 text-teal focus:ring-teal accent-teal text-sm"
                 />
                 <label htmlFor="chk-deductible-deposit" className="text-sm font-semibold text-navy">
-                  Requires Statutory Deductible Deposit
+                  Requires Deductible Payment Verification
                 </label>
               </div>
 
@@ -338,11 +339,17 @@ export default function ContractorPortal() {
                   <p className="italic text-slate-400">Electronic Signatures: [Apex Elite authorized signer] & [John Doe - Pending homeowner tap]</p>
                 </div>
 
-                <div className="flex gap-2 justify-end">
+                <div className="flex items-center gap-2 justify-end">
+                  {downloadSuccess && (
+                    <span className="text-xs font-semibold text-teal animate-pulse">✓ Proposal PDF Saved</span>
+                  )}
                   <button
                     onClick={() => {
-                      alert('MCL Compliant proposal PDF mock downloaded!');
-                      setShowContractPreview(false);
+                      setDownloadSuccess(true);
+                      setTimeout(() => {
+                        setDownloadSuccess(false);
+                        setShowContractPreview(false);
+                      }, 2000);
                     }}
                     className="px-3.5 py-1.5 bg-navy hover:bg-navy/90 text-white font-bold text-xs rounded-lg transition flex items-center gap-1"
                   >

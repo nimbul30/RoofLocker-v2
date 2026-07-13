@@ -89,7 +89,7 @@ export default function RedFlagScanner() {
           title: 'Custom Contract Evaluation',
           severity: 'high',
           lawCitation: 'Michigan Residential Code General Practices',
-          explanation: 'No high-severity contingency clauses detected. Ensure that payment terms specify release matching the milestones instead of large front-end cash deposits.'
+          explanation: 'No high-severity contingency clauses detected. Ensure that contract terms specify progress milestones rather than requiring large front-end deposits without physical progress.'
         });
       }
 

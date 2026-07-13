@@ -53,8 +53,17 @@ export interface ChatMessage {
   timestamp: string;
   attachmentUrl?: string;
   attachmentName?: string;
-  attachmentType?: 'image' | 'pdf' | 'doc';
+  attachmentType?: 'image' | 'pdf' | 'doc' | 'audio' | 'video' | 'document';
+  attachmentDuration?: string; // e.g. "0:15"
+  attachmentSize?: string;
   flagged?: boolean;
+  redactedFields?: {
+    fullName: boolean;
+    phone: boolean;
+    email: boolean;
+    address: boolean;
+  };
+  customRedactedPhrases?: string[];
 }
 
 export interface EscrowMilestone {

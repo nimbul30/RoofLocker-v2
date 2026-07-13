@@ -57,7 +57,7 @@ export default function App() {
   const [adminLogs, setAdminLogs] = useState<string[]>([
     'System: CRAWLED Michigan LARA dockets - 0 alerts found for Apex Elite.',
     'Privacy Guard: Scanned 12 incoming message packets. No email leaks found.',
-    'Security: Auto-verified statutory $1,000 deductible compliance.'
+    'Security: Verified statutory $1,000 deductible compliance record.'
   ]);
 
   const handleSelectContractor = (contractor: Contractor) => {

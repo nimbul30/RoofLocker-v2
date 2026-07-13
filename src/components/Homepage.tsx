@@ -349,7 +349,7 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
               <Lock className="w-4 h-4 shrink-0" />
               <div className="text-left">
                 <span className="block text-[10px] uppercase opacity-60 tracking-wider">{t('Step 3', 'Paso 3', language)}</span>
-                <span className="block leading-tight">{t('Insurance Details', 'Detalles de Seguro', language)}</span>
+                <span className="block leading-tight">{t('Funding & Cost Planning', 'Financiamiento y Costos', language)}</span>
               </div>
               <span className={`hidden sm:inline-block ml-auto text-[10px] font-mono px-2 py-0.5 rounded ${includeDeductible ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-500'}`}>
                 {includeDeductible ? `$${deductible}` : t('Retail', 'Minorista', language)}
@@ -616,7 +616,7 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
                       onChange={(e) => setIncludeDeductible(e.target.checked)}
                       className="rounded border-slate-300 text-teal focus:ring-teal w-5 h-5 cursor-pointer accent-teal shrink-0"
                     />
-                    {t('Verify Insurance Deductible Share', 'Verificar Deducible de Seguro', language)}
+                    {t('Verify Project Co-Funding Share', 'Verificar Co-financiamiento del Proyecto', language)}
                   </label>
                   <span className={`text-xs uppercase px-2.5 py-1 rounded-full font-mono font-bold ${includeDeductible ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-500'}`}>
                     {includeDeductible ? t('Included in Math', 'Incluido en el Cálculo', language) : t('Retail Project (Uncovered)', 'Proyecto Minorista (No Cubierto)', language)}
@@ -626,7 +626,7 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
                 <div className={`space-y-4 transition-all duration-300 ${includeDeductible ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
                   <div className="flex justify-between items-baseline">
                     <span className="text-xs font-semibold text-stone-gray flex items-center gap-1">
-                      {t('Policy Deductible Amount', 'Monto del Deducible de Póliza', language)}
+                      {t('Your Deductible Contribution', 'Su Contribución de Deducible', language)}
                       <Lock className="w-3.5 h-3.5 text-amber" />
                     </span>
                     <span className={`text-xl font-bold font-mono ${includeDeductible ? 'text-amber' : 'text-slate-400'}`}>
@@ -850,11 +850,11 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
             {expandedSection === 'lara' && (
               <div className="mt-3 pt-3 border-t border-slate-800/80 space-y-2.5 text-xs md:text-sm">
                 <p className="text-slate-300">
-                  <span className="text-rose-400 font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('⚠️ Contractor Pitch:', '⚠️ Oferta del Contratista:', language)}</span>
+                  <span className="text-amber font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('📋 Project Scenario:', '📋 Escenario del Proyecto:', language)}</span>
                   {t('"We found extra rotted wood-decking during tear-off and must charge $2,500 more to proceed with shingles."', '"Encontramos madera de cubierta podrida adicional durante la remoción y debemos cobrar $2,500 más para proceder con las tejas."', language)}
                 </p>
-                <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
-                  <strong>{t('The Trap:', 'La Trampa:', language)}</strong> {t('Many contractors submit artificially low initial bids to win the job, then claim massive, unverifiable decking issues once your roof is exposed and you are most vulnerable.', 'Muchos contratistas presentan ofertas iniciales artificialmente bajas para ganar el trabajo, y luego reclaman problemas masivos y no verificables en la cubierta de madera una vez que su techo está expuesto y usted es más vulnerable.', language)}
+                <div className="p-2.5 rounded bg-slate-900 border border-slate-800 text-slate-300 text-xs">
+                  <strong>{t('The Challenge:', 'El Desafío:', language)}</strong> {t('Roof decking issues (like rotted wood) are often unseen until old shingles are removed. Unforeseen structural repairs can add unexpected costs and timing delays to a project once work has begun.', 'Los problemas con la cubierta del techo (como la madera podrida) a menudo no se ven hasta que se retiran las tejas viejas. Las reparaciones estructurales imprevistas pueden agregar costos inesperados y retrasar los tiempos del proyecto una vez comenzada la obra.', language)}
                 </div>
                 <div className="p-2.5 rounded bg-teal/10 border border-teal/20 text-teal-300 text-xs flex items-start gap-1.5">
                   <ShieldCheck className="w-4 h-4 shrink-0 text-teal" />
@@ -891,11 +891,11 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
             {expandedSection === 'deductible' && (
               <div className="mt-3 pt-3 border-t border-slate-800/80 space-y-2.5 text-xs md:text-sm">
                 <p className="text-slate-300">
-                  <span className="text-rose-400 font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('⚠️ Contractor Pitch:', '⚠️ Oferta del Contratista:', language)}</span>
+                  <span className="text-amber font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('📋 Deposit Practice:', '📋 Práctica de Depósito:', language)}</span>
                   {t('"We require a 50% upfront cash deposit to secure the crew and order specialized shingles."', '"Requerimos un depósito en efectivo por adelantado del 50% para asegurar la cuadrilla y ordenar las tejas especializadas."', language)}
                 </p>
-                <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
-                  <strong>{t('The Trap:', 'La Trampa:', language)}</strong> {t('Handing over huge upfront deposits is highly risky. Contractors can delay your build for months, use your funds to finish other jobs, or completely walk away.', 'Entregar grandes depósitos por adelantado es muy arriesgado. Los contratistas pueden retrasar su construcción por meses, usar sus fondos para terminar otros trabajos o desaparecer por completo.', language)}
+                <div className="p-2.5 rounded bg-slate-900 border border-slate-800 text-slate-300 text-xs">
+                  <strong>{t('The Challenge:', 'El Desafío:', language)}</strong> {t('Committing large upfront deposits before work starts can create project scheduling risks or material delivery delays if not clearly tracked and documented.', 'Comprometer grandes depósitos antes de comenzar la obra puede generar riesgos de programación o retrasos en la entrega de materiales si no se realiza un seguimiento claro y documentado.', language)}
                 </div>
                 <div className="p-2.5 rounded bg-teal/10 border border-teal/20 text-teal-300 text-xs flex items-start gap-1.5">
                   <ShieldCheck className="w-4 h-4 shrink-0 text-teal" />
@@ -932,11 +932,11 @@ export default function Homepage({ onNavigate, hasUnlockedPortal, language = 'en
             {expandedSection === 'materials' && (
               <div className="mt-3 pt-3 border-t border-slate-800/80 space-y-2.5 text-xs md:text-sm">
                 <p className="text-slate-300">
-                  <span className="text-rose-400 font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('⚠️ Contractor Pitch:', '⚠️ Oferta del Contratista:', language)}</span>
+                  <span className="text-amber font-semibold uppercase font-mono tracking-wider text-[11px] block mb-1">{t('📋 Product Specification:', '📋 Especificación del Producto:', language)}</span>
                   {t('"We will install high-grade underlayment and top-tier architectural shingles on your roof."', '"Instalaremos contrapiso de alta calidad y tejas arquitectónicas de primer nivel en su techo."', language)}
                 </p>
-                <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
-                  <strong>{t('The Trap:', 'La Trampa:', language)}</strong> {t('Vague verbal estimates allow sub-par contractors to swap specified premium products for cheaper, off-brand materials that compromise durability and void your manufacturer warranty.', 'Las estimaciones verbales imprecisas permiten que contratistas deficientes cambien los productos premium especificados por materiales de marcas baratas e inferiores que comprometen la durabilidad y anulan la garantía del fabricante.', language)}
+                <div className="p-2.5 rounded bg-slate-900 border border-slate-800 text-slate-300 text-xs">
+                  <strong>{t('The Challenge:', 'El Desafío:', language)}</strong> {t('Vague verbal agreements can lead to unintentional product substitutions, resulting in off-brand materials that compromise roof durability or accidentally void your manufacturer warranty.', 'Los acuerdos verbales imprecisos pueden provocar sustituciones involuntarias de productos, dando como resultado materiales inferiores que comprometen la durabilidad del techo o anulan accidentalmente su garantía.', language)}
                 </div>
                 <div className="p-2.5 rounded bg-teal/10 border border-teal/20 text-teal-300 text-xs flex items-start gap-1.5">
                   <ShieldCheck className="w-4 h-4 shrink-0 text-teal" />

@@ -1,6 +1,6 @@
 {
   "name": "RoofLocker",
   "description": "A protective, trust-first digital safe zone connecting homeowners with vetted roofing contractors and helping them file bulletproof, compliant insurance claims in Michigan.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera", "microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

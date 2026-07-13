@@ -353,7 +353,7 @@ export default function ProjectDisputeCenter() {
                 <p>
                   [June 12, 10:14 AM] Drone flyover LIDAR mesh completed. Confidence index 99.1%.<br />
                   [June 15, 02:15 PM] Pin #1 dropped on South-West Hip Slope. Category: Wind-Fractured Shingles.<br />
-                  [June 15, 02:23 PM] Milestone #1 (Deductible Deposit) logged via Stripe security. Wallet Hash: OC9876.
+                  [June 15, 02:23 PM] Milestone #1 (Deductible Payment Receipt) logged for record compliance.
                 </p>
               </div>
 

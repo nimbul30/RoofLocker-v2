@@ -19,8 +19,8 @@ export default function AboutUs({ language = 'en' }: AboutUsProps) {
       icon: <Scale className="w-5 h-5 text-teal" />,
     },
     {
-      title: t('Durable Escrow Protection', 'Protección de Depósito en Garantía Duradera', language),
-      description: t('By isolating project funds and state-mandated deductibles in milestone contracts, we guarantee your money stays yours until complete proof of quality work is produced.', 'Al aislar los fondos del proyecto y los deducibles obligatorios por ley en contratos de hitos, garantizamos que su dinero siga siendo suyo hasta que se presenten pruebas completas de un trabajo de calidad.', language),
+      title: t('Structured Progress Verification', 'Verificación Estructurada del Progreso', language),
+      description: t('By documenting project specifications and recording milestone achievements, we provide clear verification before you sign off on any completed phases of work.', 'Al documentar las especificaciones del proyecto y registrar el progreso de los hitos, proporcionamos una verificación clara antes de aprobar cualquier fase completada.', language),
       icon: <ShieldCheck className="w-5 h-5 text-teal" />,
     },
   ];
@@ -53,7 +53,7 @@ export default function AboutUs({ language = 'en' }: AboutUsProps) {
             {t('Every year, severe wind and hail storms sweep across our cities, leaving thousands of homes with damaged shingles. In their wake come the "storm chasers"—unlicensed, high-pressure out-of-state solicitors knocking on doors, demanding quick contract signatures, and promising to "waive" deductibles.', 'Cada año, fuertes vientos y tormentas de granizo azotan nuestras ciudades, dejando miles de viviendas con tejas dañadas. A su paso llegan los "cazadores de tormentas": promotores de fuera del estado, sin licencia y de alta presión que tocan puertas, exigen firmas rápidas de contratos y prometen "eximir" los deducibles.', language)}
           </p>
           <p className="text-stone-gray text-xs md:text-sm leading-relaxed">
-            {t('Homeowners are left with poorly installed roofs, cancelled insurance policies, and legal headaches. We decided to build a platform that turns the tables. RoofLocker is a digital fortress where homeowners retain full control over their damage records, communication, and claim funds.', 'Los propietarios se quedan con techos mal instalados, pólizas de seguro canceladas y dolores de cabeza legales. Decidimos construir una plataforma que cambie las reglas del juego. RoofLocker es una fortaleza digital donde los propietarios conservan el control total de sus registros de daños, comunicación y fondos de reclamos.', language)}
+            {t('Homeowners are left with poorly installed roofs, cancelled insurance policies, and legal headaches. We decided to build a platform that turns the tables. RoofLocker is a digital fortress where homeowners retain full control over their property records, communication, and project documentation.', 'Los propietarios se quedan con techos mal instalados, pólizas de seguro canceladas y dolores de cabeza legales. Decidimos construir una plataforma que cambie las reglas del juego. RoofLocker es una fortaleza digital donde los propietarios conservan el control total de sus registros de propiedad, comunicación y documentación del proyecto.', language)}
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function AboutUs({ language = 'en' }: AboutUsProps) {
       <div className="bg-navy border border-deep-slate rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl">
         <div className="space-y-1 text-center md:text-left">
           <h3 className="font-display font-bold text-lg">{t('Have questions about compliance?', '¿Tiene preguntas sobre cumplimiento?', language)}</h3>
-          <p className="text-xs text-mist leading-relaxed">{t('Our consumer protection specialists are here to guide you through state insurance regulations.', 'Nuestros especialistas en protección al consumidor están aquí para guiarle a través de las regulaciones estatales de seguros.', language)}</p>
+          <p className="text-xs text-mist leading-relaxed">{t('Our consumer protection specialists are here to provide educational resources on construction guidelines and project compliance.', 'Nuestros especialistas en protección al consumidor están aquí para ofrecer recursos educativos sobre pautas de construcción y cumplimiento de proyectos.', language)}</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto shrink-0">

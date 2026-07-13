@@ -176,39 +176,39 @@ export const MOCK_CHAT_HISTORY: ChatMessage[] = [
 export const MOCK_MILESTONES: EscrowMilestone[] = [
   {
     id: 'ms-1',
-    title: 'Deductible Deposited',
-    description: 'Homeowner verifies the statutory deductible payment record.',
+    title: 'Deductible Verified',
+    description: 'Homeowner verifies statutory deductible contribution compliance.',
     status: 'completed',
     amount: 1000.00,
     isDeductible: true,
-    requiredProofDescription: 'Auto-verified via Stripe API secure token.'
+    requiredProofDescription: 'Homeowner uploads or inputs deductible receipt record for compliance documentation.'
   },
   {
     id: 'ms-2',
     title: 'Material Delivery Audit',
-    description: 'Milestone 1: Shingle pallets arrive on your driveway. Release initial material draw (40%).',
+    description: 'Milestone 1: Shingle pallets delivered on-site. Verifies that physical materials correspond to specifications (40% physical progress).',
     status: 'active',
     amount: 5400.00,
     isDeductible: false,
-    requiredProofDescription: 'Upload a clear photo of the shingle pallets sitting on your driveway to verify materials before releasing funds.'
+    requiredProofDescription: 'Upload a clear photo of the shingle pallets sitting on your driveway to verify materials for compliance records.'
   },
   {
     id: 'ms-3',
     title: 'Tear-Off Complete & Deck Inspection',
-    description: 'Milestone 2: Bare wood deck is prepared. Releases mid-project draw (30%).',
+    description: 'Milestone 2: Bare wood deck is prepared. Verifies structural integrity before new shingles are laid (70% physical progress).',
     status: 'locked',
     amount: 4050.00,
     isDeductible: false,
-    requiredProofDescription: 'Contractor must upload a photo of the clean bare deck showing the double-layer ice barrier in place.'
+    requiredProofDescription: 'Contractor must upload a photo of the clean bare deck showing the double-layer ice barrier in place for project files.'
   },
   {
     id: 'ms-4',
     title: 'Final Completion & Clean-Up Sign-Off',
-    description: 'Project Close: Complete structural sign-off. Releases final balance (30%).',
+    description: 'Project Close: Complete structural sign-off and yard clean-up audit (100% physical progress).',
     status: 'locked',
     amount: 4050.00,
     isDeductible: false,
-    requiredProofDescription: 'Homeowner inspects the yard, verifies magnetic magnet sweeps for nails, and taps "Confirm Satisfaction".'
+    requiredProofDescription: 'Homeowner inspects the yard, verifies magnetic nail sweeps, and taps "Confirm Satisfaction" to complete project documentation.'
   }
 ];
 

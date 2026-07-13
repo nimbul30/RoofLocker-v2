@@ -30,7 +30,7 @@ export default function HowItWorks({ onNavigate, language = 'en' }: HowItWorksPr
     {
       number: '04',
       title: t('Milestone Project Tracking', 'Seguimiento del Proyecto por Hitos', language),
-      description: t("Track your project's progress (including insurance scoping, material deliveries, and builds) inside our milestone timeline. Release sign-offs only when you inspect the verified proof of work.", 'Siga el progreso de su proyecto (incluida la evaluación del seguro, entrega de materiales y construcción) en nuestra línea de tiempo de hitos. Libere las aprobaciones solo cuando inspeccione la prueba de trabajo verificada.', language),
+      description: t("Track your project's progress (including physical scope planning, material deliveries, and builds) inside our milestone timeline. Provide your sign-off only when you inspect the verified proof of work.", 'Siga el progreso de su proyecto (incluida la planificación física del alcance, entrega de materiales y construcción) en nuestra línea de tiempo de hitos. Proporcione sus aprobaciones solo cuando inspeccione la prueba de trabajo verificada.', language),
       icon: <Landmark className="w-6 h-6 text-teal" />,
     },
   ];
@@ -58,7 +58,7 @@ export default function HowItWorks({ onNavigate, language = 'en' }: HowItWorksPr
         <div>
           <strong className="text-sm font-semibold text-navy block font-display">{t('Compliant with MCL § 500.2082 & State Consumer Laws', 'Cumple con MCL § 500.2082 y Leyes Estatales de Consumidores', language)}</strong>
           <span className="text-xs text-stone-gray leading-relaxed block mt-0.5">
-            {t('By state law, offering to waive, rebate, or pay a homeowner’s deductible is illegal and voids your policy. RoofLocker is legally engineered to keep your claim completely clean and valid.', 'Según la ley estatal, ofrecer eximir, reembolsar o pagar el deducible de un propietario es ilegal y anula su póliza. RoofLocker está diseñado legalmente para mantener su reclamo completamente limpio y válido.', language)}
+            {t('By state law, offering to waive, rebate, or pay a homeowner’s deductible is illegal and voids your policy. RoofLocker is legally engineered to ensure transparent property documentation that respects state legal standards.', 'Según la ley estatal, ofrecer eximir, reembolsar o pagar el deducible de un propietario es ilegal y anula su póliza. RoofLocker está diseñado legalmente para garantizar documentación transparente de la propiedad que respete las normas legales estatales.', language)}
           </span>
         </div>
       </div>

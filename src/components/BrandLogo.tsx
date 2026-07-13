@@ -176,7 +176,7 @@ export default function BrandLogo({
   className?: string;
   layout?: 'horizontal' | 'vertical' | 'card';
 }) {
-  const [imgSrc, setImgSrc] = React.useState('/Family-Hero-Webpage.jpeg');
+  const [imgSrc, setImgSrc] = React.useState('/Hero-Section-Family-Image.jpeg');
 
   if (layout === 'card') {
     return (
@@ -191,7 +191,7 @@ export default function BrandLogo({
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none"
           onError={() => {
-            if (imgSrc === '/Family-Hero-Webpage.jpeg') {
+            if (imgSrc === '/Hero-Section-Family-Image.jpeg' || imgSrc === '/Family-Hero-Webpage.jpeg') {
               setImgSrc('https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&w=800&q=80');
             }
           }}
