@@ -1,13 +1,27 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, User } from 'firebase/auth';
-import { firebaseConfig } from './firebaseConfig';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, User, Auth } from 'firebase/auth';
+import { firebaseConfig, isFirebaseConfigured } from './firebaseConfig';
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Firebase is initialized lazily and only when configured, so the app runs
+// (with Google sign-in disabled) when no VITE_FIREBASE_* env vars are set.
+let app: FirebaseApp | null = null;
+let authInstance: Auth | null = null;
 
-const provider = new GoogleAuthProvider();
-provider.addScope('https://www.googleapis.com/auth/calendar');
-provider.addScope('https://www.googleapis.com/auth/calendar.events');
+const getAuthInstance = (): Auth | null => {
+  if (!isFirebaseConfigured) return null;
+  if (!authInstance) {
+    app = initializeApp(firebaseConfig);
+    authInstance = getAuth(app);
+  }
+  return authInstance;
+};
+
+const buildProvider = () => {
+  const provider = new GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/calendar');
+  provider.addScope('https://www.googleapis.com/auth/calendar.events');
+  return provider;
+};
 
 let isSigningIn = false;
 
@@ -20,6 +34,11 @@ export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
 ) => {
+  const auth = getAuthInstance();
+  if (!auth) {
+    if (onAuthFailure) onAuthFailure();
+    return () => {};
+  }
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
       if (cachedAccessToken) {
@@ -36,9 +55,13 @@ export const initAuth = (
 };
 
 export const googleSignIn = async (): Promise<{ user: User; accessToken: string } | null> => {
+  const auth = getAuthInstance();
+  if (!auth) {
+    throw new Error('Google sign-in is not configured for this deployment (missing VITE_FIREBASE_* environment variables).');
+  }
   try {
     isSigningIn = true;
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, buildProvider());
     const credential = GoogleAuthProvider.credentialFromResult(result);
     if (!credential?.accessToken) {
       throw new Error('Failed to get access token from Firebase Auth');
@@ -63,6 +86,9 @@ export const clearAccessToken = () => {
 };
 
 export const logout = async () => {
-  await auth.signOut();
+  const auth = getAuthInstance();
+  if (auth) {
+    await auth.signOut();
+  }
   cachedAccessToken = null;
 };

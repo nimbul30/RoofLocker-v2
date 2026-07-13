@@ -47,9 +47,14 @@ npm run lint       # ESLint
 
 ## Configuration
 
-Firebase web config defaults to `firebase-applet-config.json` (the AI Studio
-applet project). To point a deployment at a different Firebase project, set
-the `VITE_FIREBASE_*` variables — see [.env.example](.env.example).
+Firebase web config is supplied entirely via `VITE_FIREBASE_*` environment
+variables — copy [.env.example](.env.example) to `.env.local` and fill in the
+values from your Firebase project settings. No keys are committed to the
+repo. Without them the app still runs, with Google sign-in disabled.
+
+A Firebase web API key ships in the built JS bundle by design, so also
+restrict the key in the Google Cloud console (HTTP referrers + Identity
+Toolkit API only) and keep Firebase Auth authorized domains tight.
 
 The Google sign-in flow requests Calendar scopes so homeowners can schedule
 contractor sessions; access tokens expire after ~1 hour, and the UI prompts
