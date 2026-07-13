@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Contractor, Review } from '../types';
+import { Contractor } from '../types';
 import { MOCK_CONTRACTORS } from '../mockData';
-import { Search, MapPin, BadgeCheck, FileText, Globe, Star, ShieldCheck, UserPlus, Sparkles, Building, AlertCircle, Info, ThumbsUp, Phone } from 'lucide-react';
+import { Search, MapPin, BadgeCheck, Globe, ShieldCheck, UserPlus, Sparkles, AlertCircle, Info, Phone } from 'lucide-react';
 import { t } from '../translations';
 
 interface ContractorDirectoryProps {

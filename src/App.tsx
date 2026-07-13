@@ -1,64 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Contractor, DamagePin } from './types';
 import { MOCK_CONTRACTORS, MOCK_INITIAL_PINS } from './mockData';
-import ExplainerVideo from './components/ExplainerVideo';
-import DamageCanvas from './components/DamageCanvas';
-import ContractorDirectory from './components/ContractorDirectory';
-import RedFlagScanner from './components/RedFlagScanner';
-import CommunicationHub from './components/CommunicationHub';
-import ProjectDisputeCenter from './components/ProjectDisputeCenter';
-import Homepage from './components/Homepage';
-import ContractorPortal from './components/ContractorPortal';
 import BrandLogo from './components/BrandLogo';
-import LoginPage from './components/LoginPage';
-import HowItWorks from './components/HowItWorks';
-import Guides from './components/Guides';
-import AboutUs from './components/AboutUs';
 import { t } from './translations';
-import { 
-  ShieldCheck, 
-  User, 
-  Briefcase, 
-  Settings, 
-  MapPin, 
-  FileSearch, 
-  MessageSquare, 
-  Scale, 
-  CheckCircle, 
-  Sparkles, 
-  Building2, 
-  ArrowRight, 
+import {
+  User,
+  Settings,
+  MapPin,
+  FileSearch,
+  MessageSquare,
+  Scale,
+  Sparkles,
+  Building2,
   HelpCircle,
-  AlertTriangle,
-  Info,
   Home,
   Lock,
   Search,
-  Hammer,
   BookOpen,
   Menu,
   X
 } from 'lucide-react';
 
+// Views are lazy-loaded so the initial bundle only carries the shell;
+// heavy dependencies (Firebase in CommunicationHub, the canvas tooling in
+// DamageCanvas) load when their view is first opened.
+const ExplainerVideo = lazy(() => import('./components/ExplainerVideo'));
+const DamageCanvas = lazy(() => import('./components/DamageCanvas'));
+const ContractorDirectory = lazy(() => import('./components/ContractorDirectory'));
+const RedFlagScanner = lazy(() => import('./components/RedFlagScanner'));
+const CommunicationHub = lazy(() => import('./components/CommunicationHub'));
+const ProjectDisputeCenter = lazy(() => import('./components/ProjectDisputeCenter'));
+const Homepage = lazy(() => import('./components/Homepage'));
+const ContractorPortal = lazy(() => import('./components/ContractorPortal'));
+const LoginPage = lazy(() => import('./components/LoginPage'));
+const HowItWorks = lazy(() => import('./components/HowItWorks'));
+const Guides = lazy(() => import('./components/Guides'));
+const AboutUs = lazy(() => import('./components/AboutUs'));
+
+type View = 'home' | 'directory' | 'portal' | 'protection-suite' | 'admin' | 'login' | 'how-it-works' | 'guides' | 'about';
+
+const VALID_VIEWS: View[] = ['home', 'directory', 'portal', 'protection-suite', 'admin', 'login', 'how-it-works', 'guides', 'about'];
+
+const getViewFromHash = (): View => {
+  const hash = window.location.hash.replace(/^#\/?/, '');
+  return (VALID_VIEWS as string[]).includes(hash) ? (hash as View) : 'home';
+};
+
+// Simulation parameters
+const ADMIN_LOGS = [
+  'System: CRAWLED Michigan LARA dockets - 0 alerts found for Apex Elite.',
+  'Privacy Guard: Scanned 12 incoming message packets. No email leaks found.',
+  'Security: Verified statutory $1,000 deductible compliance record.'
+];
+
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'directory' | 'portal' | 'protection-suite' | 'admin' | 'login' | 'how-it-works' | 'guides' | 'about'>('home');
+  const [currentView, setCurrentViewState] = useState<View>(getViewFromHash);
   const [language, setLanguage] = useState<'en' | 'es'>('en');
   const [hasUnlockedPortal, setHasUnlockedPortal] = useState(false);
   const [activeTab, setActiveTab] = useState<'canvas' | 'chat' | 'scanner' | 'disputes'>('canvas');
   const [loginInitialRole, setLoginInitialRole] = useState<'home' | 'portal' | 'admin'>('home');
   const [loginInitialIsSignUp, setLoginInitialIsSignUp] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
+  // Sync the current view with the URL hash so the back button and
+  // deep links work (e.g. #/directory).
+  const setCurrentView = (view: View) => {
+    setCurrentViewState(view);
+    const newHash = `#/${view}`;
+    if (window.location.hash !== newHash) {
+      window.location.hash = newHash;
+    }
+  };
+
+  useEffect(() => {
+    const onHashChange = () => setCurrentViewState(getViewFromHash());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  // Keep the document language in sync for accessibility and SEO.
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   // Dynamic State for interactive parts
   const [selectedContractor, setSelectedContractor] = useState<Contractor>(MOCK_CONTRACTORS[0]);
   const [pins, setPins] = useState<DamagePin[]>(MOCK_INITIAL_PINS);
-
-  // Simulation parameters
-  const [adminLogs, setAdminLogs] = useState<string[]>([
-    'System: CRAWLED Michigan LARA dockets - 0 alerts found for Apex Elite.',
-    'Privacy Guard: Scanned 12 incoming message packets. No email leaks found.',
-    'Security: Verified statutory $1,000 deductible compliance record.'
-  ]);
 
   const handleSelectContractor = (contractor: Contractor) => {
     setSelectedContractor(contractor);
@@ -202,7 +229,14 @@ export default function App() {
 
       {/* MAIN CONTAINER WORKSPACE */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
-        
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-24 text-stone-gray text-sm font-semibold animate-pulse">
+              {t('Loading…', 'Cargando…', language)}
+            </div>
+          }
+        >
+
         {/* VIEW 0: MOCK LOGIN GATEWAY */}
         {currentView === 'login' && (
           <LoginPage 
@@ -241,7 +275,7 @@ export default function App() {
 
         {/* NEW VIEW: DEFENSE GUIDES */}
         {currentView === 'guides' && (
-          <Guides language={language} />
+          <Guides />
         )}
 
         {/* NEW VIEW: ABOUT US */}
@@ -308,7 +342,7 @@ export default function App() {
               </div>
 
               <div className="space-y-3 font-mono text-[10px] text-slate-400">
-                {adminLogs.map((log, idx) => (
+                {ADMIN_LOGS.map((log, idx) => (
                   <div key={idx} className="p-2 bg-deep-slate rounded border border-slate-800">
                     {log}
                   </div>
@@ -422,6 +456,7 @@ export default function App() {
           </div>
         )}
 
+        </Suspense>
       </main>
 
       {/* FOOTER */}

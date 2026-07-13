@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { PREDATORY_CONTRACT_SAMPLE } from '../mockData';
-import { ShieldAlert, FileSearch, Sparkles, AlertTriangle, FileText, Scale, Check, Info } from 'lucide-react';
+import { ShieldAlert, FileSearch, Sparkles, FileText, Scale, Info } from 'lucide-react';
 
 interface RedFlag {
   id: string;
   phrase: string;
   title: string;
-  severity: 'high' | 'critical';
+  severity: 'info' | 'high' | 'critical';
   lawCitation: string;
   explanation: string;
 }
@@ -87,7 +87,7 @@ export default function RedFlagScanner() {
           id: 'flag-generic',
           phrase: 'Standard Agreement',
           title: 'Custom Contract Evaluation',
-          severity: 'high',
+          severity: 'info',
           lawCitation: 'Michigan Residential Code General Practices',
           explanation: 'No high-severity contingency clauses detected. Ensure that contract terms specify progress milestones rather than requiring large front-end deposits without physical progress.'
         });
@@ -99,22 +99,37 @@ export default function RedFlagScanner() {
     }, 1500); // Simulate AI scan wait
   };
 
-  // Helper to highlight terms in the text
+  // Helper to highlight terms in the text. Builds React elements rather than
+  // raw HTML so pasted contract text can never inject markup into the page.
   const renderHighlightedText = () => {
     if (!hasScanned) return <pre className="whitespace-pre-wrap text-stone-gray font-mono text-[11px] leading-relaxed select-all">{contractText}</pre>;
 
-    let text = contractText;
-    foundFlags.forEach(flag => {
-      if (flag.id === 'flag-generic') return;
-      const regex = new RegExp(`(${flag.phrase})`, 'gi');
-      text = text.replace(regex, `<mark class="bg-red-100 text-red-900 border-b-2 border-red-400 font-semibold px-1 py-0.5" title="${flag.title}">$1</mark>`);
-    });
+    const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const flaggedPhrases = foundFlags.filter(flag => flag.id !== 'flag-generic');
+    const titleByPhrase = new Map(flaggedPhrases.map(flag => [flag.phrase.toLowerCase(), flag.title]));
+
+    let parts: React.ReactNode[] = [contractText];
+    if (flaggedPhrases.length > 0) {
+      const pattern = new RegExp(`(${flaggedPhrases.map(f => escapeRegExp(f.phrase)).join('|')})`, 'gi');
+      parts = contractText.split(pattern).map((part, index) =>
+        titleByPhrase.has(part.toLowerCase()) ? (
+          <mark
+            key={index}
+            className="bg-red-100 text-red-900 border-b-2 border-red-400 font-semibold px-1 py-0.5"
+            title={titleByPhrase.get(part.toLowerCase())}
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      );
+    }
 
     return (
-      <div
-        className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed select-all text-stone-gray"
-        dangerouslySetInnerHTML={{ __html: text }}
-      />
+      <div className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed select-all text-stone-gray">
+        {parts}
+      </div>
     );
   };
 
@@ -217,26 +232,33 @@ export default function RedFlagScanner() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-100 mb-2">
-                <span className="text-[11px] font-bold text-red-800 uppercase tracking-wider">Identified Risk Levels</span>
-                <span className="text-xs bg-red-600 text-white font-mono px-2 py-0.5 rounded-full font-bold">
-                  {foundFlags.filter(f => f.severity === 'critical').length} Critical • {foundFlags.filter(f => f.severity === 'high').length} High
-                </span>
-              </div>
+              {(() => {
+                const criticalCount = foundFlags.filter(f => f.severity === 'critical').length;
+                const highCount = foundFlags.filter(f => f.severity === 'high').length;
+                const hasRisks = criticalCount + highCount > 0;
+                return (
+                  <div className={`flex justify-between items-center p-3 rounded-xl border mb-2 ${hasRisks ? 'bg-red-50 border-red-100' : 'bg-teal/5 border-teal/20'}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-wider ${hasRisks ? 'text-red-800' : 'text-teal'}`}>Identified Risk Levels</span>
+                    <span className={`text-xs text-white font-mono px-2 py-0.5 rounded-full font-bold ${hasRisks ? 'bg-red-600' : 'bg-teal'}`}>
+                      {criticalCount} Critical • {highCount} High
+                    </span>
+                  </div>
+                );
+              })()}
 
               {foundFlags.map(flag => (
                 <div
                   key={flag.id}
                   id={`scanner-card-${flag.id}`}
                   className="p-4 border rounded-xl bg-slate-50 hover:bg-white transition-all duration-300 relative overflow-hidden"
-                  style={{ borderLeftWidth: '4px', borderLeftColor: flag.severity === 'critical' ? '#ef4444' : '#f59e0b' }}
+                  style={{ borderLeftWidth: '4px', borderLeftColor: flag.severity === 'critical' ? '#ef4444' : flag.severity === 'high' ? '#f59e0b' : '#2E9CA6' }}
                 >
                   <div className="flex justify-between items-start mb-1.5">
                     <h4 className="font-display font-bold text-navy text-xs leading-tight">
                       {flag.title}
                     </h4>
                     <span className={`text-[9px] uppercase font-bold font-mono px-1.5 py-0.5 rounded ${
-                      flag.severity === 'critical' ? 'bg-red-100 text-red-700' : 'bg-amber/15 text-amber'
+                      flag.severity === 'critical' ? 'bg-red-100 text-red-700' : flag.severity === 'high' ? 'bg-amber/15 text-amber' : 'bg-teal/15 text-teal'
                     }`}>
                       {flag.severity}
                     </span>
@@ -267,7 +289,7 @@ export default function RedFlagScanner() {
             <div>
               <h4 className="font-display font-bold text-white text-xs uppercase tracking-wider mb-1">Michigan Legal Code Shield</h4>
               <p className="text-mist text-xs leading-relaxed">
-                Roofing contractors on RoofLocker are legally and contractually banned from altering claims packages. Always remember: **Your property measurements belong to you.** Sharing honest scope sheets with insurance adjusters ensures accurate material calculations with zero hidden traps.
+                Roofing contractors on RoofLocker are legally and contractually banned from altering claims packages. Always remember: <strong>Your property measurements belong to you.</strong> Sharing honest scope sheets with insurance adjusters ensures accurate material calculations with zero hidden traps.
               </p>
             </div>
           </div>

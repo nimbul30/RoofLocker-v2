@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, User } from 'firebase/auth';
-import firebaseConfig from '../../firebase-applet-config.json';
+import { firebaseConfig } from './firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -10,6 +10,10 @@ provider.addScope('https://www.googleapis.com/auth/calendar');
 provider.addScope('https://www.googleapis.com/auth/calendar.events');
 
 let isSigningIn = false;
+
+// Google OAuth access tokens expire after ~1 hour and Firebase does not
+// refresh them for us; callers must treat a 401 from Google APIs as an
+// expired token, call clearAccessToken(), and prompt the user to reconnect.
 let cachedAccessToken: string | null = null;
 
 export const initAuth = (
@@ -42,7 +46,7 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
 
     cachedAccessToken = credential.accessToken;
     return { user: result.user, accessToken: cachedAccessToken };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Sign in error:', error);
     throw error;
   } finally {
@@ -52,6 +56,10 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
 
 export const getAccessToken = async (): Promise<string | null> => {
   return cachedAccessToken;
+};
+
+export const clearAccessToken = () => {
+  cachedAccessToken = null;
 };
 
 export const logout = async () => {

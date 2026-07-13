@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ProjectDispute } from '../types';
-import { Scale, ShieldAlert, FileText, Calendar, MessageSquare, BadgeCheck, Download, Clock, CheckCircle2, UserCheck, AlertTriangle } from 'lucide-react';
+import { Scale, MessageSquare, Download, Clock, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 export default function ProjectDisputeCenter() {
   const [dispute, setDispute] = useState<ProjectDispute | null>(null);
