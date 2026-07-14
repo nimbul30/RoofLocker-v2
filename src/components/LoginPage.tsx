@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Briefcase, Settings, ShieldCheck, Lock, ArrowRight, Mail, Key, Hammer, RotateCcw, Phone, Building } from 'lucide-react';
+import { User, Settings, ShieldCheck, Lock, ArrowRight, Mail, Key, Hammer, RotateCcw, Phone, Building } from 'lucide-react';
 import { t } from '../translations';
 
 interface LoginPageProps {

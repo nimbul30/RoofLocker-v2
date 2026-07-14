@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, ShieldCheck, Heart, Sparkles, Scale, Mail, MapPin } from 'lucide-react';
+import { Building2, ShieldCheck, Sparkles, Scale, Mail, MapPin } from 'lucide-react';
 import { t } from '../translations';
 
 interface AboutUsProps {

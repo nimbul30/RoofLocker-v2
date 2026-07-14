@@ -10,8 +10,8 @@ interface LogoProps {
  * Official RoofLocker Logo Mark rendered via the new image or a fallback SVG structure.
  */
 export function LogoMark({ className = '', size = 48, onDark = false }: LogoProps) {
-  const [src, setSrc] = React.useState('/RoofLocker%20Logo%201024x1024%20.png');
   const [failed, setFailed] = React.useState(false);
+  const src = '/rooflocker-logo-1024.png';
 
   const numericSize = typeof size === 'number' ? size : parseInt(String(size), 10) || 48;
 
@@ -53,35 +53,23 @@ export function LogoMark({ className = '', size = 48, onDark = false }: LogoProp
           alt="RoofLocker Logo" 
           className={`${className} object-contain scale-[1.35]`} 
           style={{ width: numericSize, height: numericSize }}
-          onError={() => {
-            if (src === '/RoofLocker%20Logo%201024x1024%20.png') {
-              setSrc('/RoofLocker Logo 1024x1024 .png');
-            } else {
-              setFailed(true);
-            }
-          }}
+          onError={() => setFailed(true)}
         />
       </div>
     );
   }
 
   return (
-    <div 
-      className="inline-flex items-center justify-center shrink-0 overflow-hidden" 
+    <div
+      className="inline-flex items-center justify-center shrink-0 overflow-hidden"
       style={{ width: numericSize, height: numericSize }}
     >
-      <img 
-        src={src} 
-        alt="RoofLocker Logo" 
-        className={`${className} object-contain scale-[1.35]`} 
+      <img
+        src={src}
+        alt="RoofLocker Logo"
+        className={`${className} object-contain scale-[1.35]`}
         style={{ width: numericSize, height: numericSize }}
-        onError={() => {
-          if (src === '/RoofLocker%20Logo%201024x1024%20.png') {
-            setSrc('/RoofLocker Logo 1024x1024 .png');
-          } else {
-            setFailed(true);
-          }
-        }}
+        onError={() => setFailed(true)}
       />
     </div>
   );
@@ -102,14 +90,8 @@ export function BrandWordmark({
   height?: number;
   taglineSize?: number;
 }) {
-  const initialSrc = '/RoofLocker%20Wordmark-tagline%20(1709%20x%20300%20px).png';
-  
-  const [src, setSrc] = React.useState(initialSrc);
+  const src = '/rooflocker-wordmark-tagline.png';
   const [failed, setFailed] = React.useState(false);
-
-  React.useEffect(() => {
-    setSrc('/RoofLocker%20Wordmark-tagline%20(1709%20x%20300%20px).png');
-  }, [onDark]);
 
   const isCentered = className.includes('items-center');
   const finalTaglineSize = taglineSize || Math.max(12, Math.round(height * 0.37));
@@ -150,13 +132,7 @@ export function BrandWordmark({
         style={{ 
           height: height
         }}
-        onError={() => {
-          if (src.includes('%20')) {
-            setSrc('/RoofLocker Wordmark-tagline (1709 x 300 px).png');
-          } else {
-            setFailed(true);
-          }
-        }}
+        onError={() => setFailed(true)}
       />
     </div>
   );
@@ -176,7 +152,7 @@ export default function BrandLogo({
   className?: string;
   layout?: 'horizontal' | 'vertical' | 'card';
 }) {
-  const [imgSrc, setImgSrc] = React.useState('/Hero-Section-Family-Image.jpeg');
+  const [imgSrc, setImgSrc] = React.useState('/hero-family.jpeg');
 
   if (layout === 'card') {
     return (
@@ -191,7 +167,7 @@ export default function BrandLogo({
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none"
           onError={() => {
-            if (imgSrc === '/Hero-Section-Family-Image.jpeg' || imgSrc === '/Family-Hero-Webpage.jpeg') {
+            if (imgSrc === '/hero-family.jpeg' || imgSrc === '/family-hero-webpage.jpeg') {
               setImgSrc('https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&w=800&q=80');
             }
           }}

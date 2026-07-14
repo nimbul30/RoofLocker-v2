@@ -24,7 +24,6 @@ import {
   AlertTriangle,
   Video,
   Volume2,
-  FileVideo,
   VideoOff,
   Camera
 } from 'lucide-react';
@@ -143,11 +142,19 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
     setNewPinCoords({ x, y });
   };
 
+  // Object URLs hold their backing File in memory until revoked; release
+  // them whenever a video is replaced or removed.
+  const revokeIfBlobUrl = (url: string | null | undefined) => {
+    if (url && url.startsWith('blob:')) {
+      URL.revokeObjectURL(url);
+    }
+  };
+
   const handleVideoFile = (file: File) => {
     setVideoSizeError(null);
     const MAX_SIZE_MB = 50;
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
-    
+
     if (file.size > MAX_SIZE_BYTES) {
       setVideoSizeError(`Video size of ${(file.size / (1024 * 1024)).toFixed(1)}MB exceeds the limit of ${MAX_SIZE_MB}MB. Please trim or compress the video.`);
       return;
@@ -155,6 +162,7 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
 
     setIsUploadingVideo(true);
     try {
+      revokeIfBlobUrl(uploadedVideo);
       const objectUrl = URL.createObjectURL(file);
       setUploadedVideo(objectUrl);
       setIsUploadingVideo(false);
@@ -209,6 +217,11 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
 
   const handleConfirmDeletePin = () => {
     if (!pinToDeleteId) return;
+    const deletedPin = pins.find(p => p.id === pinToDeleteId);
+    if (deletedPin) {
+      revokeIfBlobUrl(deletedPin.videoUrl);
+      deletedPin.videoUrls?.forEach(url => revokeIfBlobUrl(url));
+    }
     const updated = pins.filter(p => p.id !== pinToDeleteId);
     onPinsChange(updated);
     if (selectedPin?.id === pinToDeleteId) {
@@ -271,7 +284,8 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
       while (currentVideoUrls.length < totalPhotosCount) {
         currentVideoUrls.push(undefined);
       }
-      
+
+      revokeIfBlobUrl(currentVideoUrls[activePhotoIndex]);
       currentVideoUrls[activePhotoIndex] = objectUrl;
 
       const updatedPin: DamagePin = {
@@ -302,7 +316,8 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
     while (currentVideoUrls.length < totalPhotosCount) {
       currentVideoUrls.push(undefined);
     }
-    
+
+    revokeIfBlobUrl(currentVideoUrls[activePhotoIndex]);
     currentVideoUrls[activePhotoIndex] = undefined;
 
     const currentNarrations = selectedPin.videoNarrations && selectedPin.videoNarrations.length > 0
@@ -362,6 +377,7 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
       currentNarrations.push(undefined);
     }
 
+    revokeIfBlobUrl(currentVideoUrls[idxToRemove]);
     const updatedVideoUrls = currentVideoUrls.filter((_, idx) => idx !== idxToRemove);
     const updatedNarrations = currentNarrations.filter((_, idx) => idx !== idxToRemove);
 
@@ -649,7 +665,10 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
     try {
       localStorage.setItem('roof_markup_image', dataUrl);
     } catch (err) {
+      // Typically a QuotaExceededError: large drawings can exceed the ~5MB
+      // localStorage budget. The markup still shows for this session.
       console.warn('Failed to save roof markup to localStorage', err);
+      window.alert('Your markup was applied, but it could not be saved for future visits (browser storage is full or unavailable). It will be lost when you close this page.');
     }
     setIsDrawingOnRoof(false);
   };
@@ -673,7 +692,9 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
       setRoofMarkupImage(null);
       try {
         localStorage.removeItem('roof_markup_image');
-      } catch {}
+      } catch {
+        // localStorage unavailable (private mode) - nothing to clear
+      }
       const canvas = roofMarkupCanvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -1327,7 +1348,7 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
                   {uploadedPreviews.length > 0 ? (
                     <div className="grid grid-cols-5 gap-2">
                       {uploadedPreviews.map((preview, idx) => (
-                        <div key={idx} className="relative aspect-square bg-slate-100 rounded-xl border border-slate-200 overflow-hidden shadow-sm group">
+                        <div key={`${preview.slice(-32)}-${idx}`} className="relative aspect-square bg-slate-100 rounded-xl border border-slate-200 overflow-hidden shadow-sm group">
                           <img 
                             src={preview} 
                             alt={`Preview ${idx + 1}`} 
@@ -1449,6 +1470,7 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
                         <button
                           type="button"
                           onClick={() => {
+                            revokeIfBlobUrl(uploadedVideo);
                             setUploadedVideo(null);
                             setVideoSizeError(null);
                           }}
@@ -2043,7 +2065,7 @@ export default function DamageCanvas({ pins, onPinsChange }: DamageCanvasProps) 
                       const isSelected = activePhotoIndex === idx;
                       return (
                         <div
-                          key={idx}
+                          key={`${pUrl.slice(-32)}-${idx}`}
                           className={`relative aspect-square rounded-xl overflow-hidden border transition-all duration-300 group/thumb ${
                             isSelected
                               ? 'ring-2 ring-teal ring-offset-2 border-teal scale-105 z-10 shadow-md'

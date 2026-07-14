@@ -1,20 +1,61 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# RoofLocker
 
-# Run and deploy your AI Studio app
+A protective, trust-first web app connecting homeowners with vetted roofing
+contractors and helping them document storm damage and file compliant
+insurance claims in Michigan.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/8df4b418-b1c3-47d0-909d-be6d0c38856c
+- **Vetted Contractor Directory** — license, court-docket, and scam-report
+  checks surfaced per contractor
+- **Damage Canvas** — pin storm damage on a roof plan with photo/video
+  evidence and a material calculator
+- **Secure Messaging Hub** — in-portal chat with automatic redaction of
+  phone numbers and emails, plus Google Calendar scheduling
+- **Red-Flag Contract Scanner** — highlights predatory clauses (contingency
+  traps, deductible-waiver fraud, unlicensed adjusting) with statute citations
+- **Three-Tier Dispute Center** — structured self-resolution, mediation, and
+  arbitration workflow
+- English/Spanish language toggle
 
-## Run Locally
+> **Note:** This is currently a front-end prototype. Login, contractor data,
+> chat replies, and admin views are simulated with mock data; the Google
+> sign-in and Calendar integration are the only live services.
 
-**Prerequisites:**  Node.js
+## Tech stack
 
+React 19 · TypeScript (strict) · Vite 6 · Tailwind CSS 4 · Firebase Auth ·
+lucide-react
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Getting started
+
+**Prerequisites:** Node.js 20+
+
+```bash
+npm install
+npm run dev        # start dev server on http://localhost:3000
+```
+
+Other scripts:
+
+```bash
+npm run build      # production build to dist/
+npm run preview    # serve the production build locally
+npm run typecheck  # TypeScript strict checking
+npm run lint       # ESLint
+```
+
+## Configuration
+
+Firebase web config is supplied entirely via `VITE_FIREBASE_*` environment
+variables — copy [.env.example](.env.example) to `.env.local` and fill in the
+values from your Firebase project settings. No keys are committed to the
+repo. Without them the app still runs, with Google sign-in disabled.
+
+A Firebase web API key ships in the built JS bundle by design, so also
+restrict the key in the Google Cloud console (HTTP referrers + Identity
+Toolkit API only) and keep Firebase Auth authorized domains tight.
+
+The Google sign-in flow requests Calendar scopes so homeowners can schedule
+contractor sessions; access tokens expire after ~1 hour, and the UI prompts
+to reconnect when that happens.

@@ -3,19 +3,11 @@ import {
   Briefcase, 
   CheckCircle, 
   AlertTriangle, 
-  ShieldCheck, 
-  FileText, 
   Coins, 
   MapPin, 
-  BadgeCheck, 
-  Plus, 
-  RefreshCw, 
   Download, 
   Sparkles, 
-  FilePlus,
-  Info,
-  ChevronRight,
-  UserCheck
+  FilePlus
 } from 'lucide-react';
 import { Contractor } from '../types';
 import { MOCK_CONTRACTORS } from '../mockData';

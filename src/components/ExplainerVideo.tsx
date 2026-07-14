@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Video, Play, CheckCircle, GraduationCap, ArrowRight, UserCheck, Eye, Lock, X, HeartHandshake, MessageSquare, ShieldAlert, AlertTriangle, FileX, ThumbsUp } from 'lucide-react';
+import { ShieldCheck, Play, CheckCircle, ArrowRight, Lock, X, HeartHandshake, MessageSquare, ShieldAlert, AlertTriangle, FileX, ThumbsUp } from 'lucide-react';
 
 interface ExplainerVideoProps {
   onComplete: () => void;
@@ -42,7 +42,7 @@ export default function ExplainerVideo({ onComplete }: ExplainerVideoProps) {
             {isPlaying ? (
               <div className="absolute inset-0 bg-black flex items-center justify-center">
                 <video
-                  src="/Welcome-Video.mp4"
+                  src="/welcome-video.mp4"
                   controls
                   autoPlay
                   className="w-full h-full object-contain"
@@ -64,7 +64,7 @@ export default function ExplainerVideo({ onComplete }: ExplainerVideoProps) {
             ) : (
               <div className="absolute inset-0 flex flex-col justify-between p-5 bg-gradient-to-t from-navy/95 via-navy/50 to-transparent">
                 <img 
-                  src="/Logo.jpeg" 
+                  src="/logo.jpeg" 
                   alt="Logo" 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none mix-blend-overlay" 

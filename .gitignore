@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Firebase project config (supply via VITE_FIREBASE_* env vars instead)
+firebase-applet-config.json

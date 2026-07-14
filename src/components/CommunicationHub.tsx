@@ -1,16 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Contractor, ChatMessage } from '../types';
 import { MOCK_CHAT_HISTORY } from '../mockData';
-import { googleSignIn, initAuth, logout } from '../lib/googleAuth';
+import { googleSignIn, initAuth, logout, clearAccessToken } from '../lib/googleAuth';
 import { User as FirebaseUser } from 'firebase/auth';
-import { createCalendarEvent, listCalendarEvents } from '../lib/googleCalendar';
+import { createCalendarEvent, listCalendarEvents, CalendarApiError } from '../lib/googleCalendar';
 import { 
   ShieldCheck, 
-  MessageCircle, 
   Send, 
   Video, 
   AlertTriangle, 
-  XCircle, 
   Play, 
   Phone, 
   HelpCircle, 
@@ -34,7 +32,6 @@ import {
   CheckCircle,
   VideoOff,
   Lock,
-  ArrowRight,
   Calendar,
   Clock,
   Loader2,
@@ -44,15 +41,16 @@ import {
   Maximize2,
   Minimize2,
   FileText,
-  Check,
-  RotateCcw,
-  Eye,
-  EyeOff
+  Eye
 } from 'lucide-react';
 
 interface CommunicationHubProps {
   contractor: Contractor;
 }
+
+// Regex rules to detect phone numbers and emails
+const PHONE_REGEX = /(\b\d{3}[-.]?\d{3}[-.]?\d{4}\b)|(\b\d{10}\b)/g;
+const EMAIL_REGEX = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 
 export default function CommunicationHub({ contractor }: CommunicationHubProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_HISTORY);
@@ -175,6 +173,16 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
     return () => unsubscribe();
   }, []);
 
+  // Google access tokens expire after ~1 hour; a 401 means the user must
+  // reconnect their calendar rather than the request being retryable.
+  const handleExpiredSession = () => {
+    clearAccessToken();
+    setAccessToken(null);
+    setNeedsAuth(true);
+    setCalendarEvents([]);
+    setScheduleError('Your Google session expired. Please reconnect your calendar.');
+  };
+
   const loadEvents = async (token: string) => {
     setIsFetchingEvents(true);
     try {
@@ -182,6 +190,9 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
       setCalendarEvents(events);
     } catch (err: any) {
       console.error("Error fetching calendar events:", err);
+      if (err instanceof CalendarApiError && err.status === 401) {
+        handleExpiredSession();
+      }
     } finally {
       setIsFetchingEvents(false);
     }
@@ -233,14 +244,13 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
     setScheduleSuccess(false);
 
     try {
-      // Build start and end dates
+      // Build start and end dates (default duration 30 minutes). Date math
+      // handles day rollover for times near midnight, e.g. 23:45 starts.
       const startDateTime = `${scheduleDate}T${scheduleTime}:00`;
-      // Default duration is 30 minutes
-      const [hours, minutes] = scheduleTime.split(':').map(Number);
-      const endMin = (minutes + 30) % 60;
-      const endHr = hours + Math.floor((minutes + 30) / 60);
+      const end = new Date(`${scheduleDate}T${scheduleTime}:00`);
+      end.setMinutes(end.getMinutes() + 30);
       const pad = (n: number) => n.toString().padStart(2, '0');
-      const endDateTime = `${scheduleDate}T${pad(endHr)}:${pad(endMin)}:00`;
+      const endDateTime = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}T${pad(end.getHours())}:${pad(end.getMinutes())}:00`;
 
       const typeLabel = scheduleType === 'video' ? 'Video Demonstration' : 'Voice Consultation';
       const summary = `RoofLocker: ${typeLabel} with ${contractor.name}`;
@@ -270,7 +280,11 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
       loadEvents(accessToken);
     } catch (err: any) {
       console.error("Scheduling failed:", err);
-      setScheduleError(err.message || "Failed to schedule event on Google Calendar");
+      if (err instanceof CalendarApiError && err.status === 401) {
+        handleExpiredSession();
+      } else {
+        setScheduleError(err.message || "Failed to schedule event on Google Calendar");
+      }
     } finally {
       setIsScheduling(false);
     }
@@ -353,7 +367,13 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
     }
   }, [webcamStream, activeMediaRecording, videoRecordingState]);
 
-  // Cleanup all intervals on unmount
+  // Cleanup all intervals on unmount only. This effect must have an empty
+  // dependency list: re-running it on state changes (e.g. webcamStream) would
+  // clear active call/recording timers mid-session. The webcam stream itself
+  // is stopped by the stream-management effect above; the ref here only
+  // covers a stream still live at unmount.
+  const webcamStreamRef = useRef<MediaStream | null>(null);
+  webcamStreamRef.current = webcamStream;
   useEffect(() => {
     return () => {
       if (callTimerRef.current) clearInterval(callTimerRef.current);
@@ -361,13 +381,9 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
       if (videoTimerRef.current) clearInterval(videoTimerRef.current);
       if (audioPlaybackIntervalRef.current) clearInterval(audioPlaybackIntervalRef.current);
       if (videoPlaybackIntervalRef.current) clearInterval(videoPlaybackIntervalRef.current);
-      stopWebcamStream();
+      webcamStreamRef.current?.getTracks().forEach(track => track.stop());
     };
-  }, [webcamStream]);
-
-  // Regex rules to detect phone numbers and emails
-  const PHONE_REGEX = /(\b\d{3}[-.]?\d{3}[-.]?\d{4}\b)|(\b\d{10}\b)/g;
-  const EMAIL_REGEX = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+  }, []);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -375,20 +391,24 @@ export default function CommunicationHub({ contractor }: CommunicationHubProps) 
 
     let text = inputText;
     let didFilter = false;
-    let snip = '';
+    const snippets: string[] = [];
 
-    // Check for phone or email
-    if (PHONE_REGEX.test(text)) {
-      snip = text.match(PHONE_REGEX)?.[0] || 'Phone Number';
+    // Check for phone or email. Using .match() (never .test() on a /g regex,
+    // whose stateful lastIndex can silently skip matches).
+    const phoneMatches = text.match(PHONE_REGEX);
+    if (phoneMatches) {
+      snippets.push(phoneMatches[0]);
       text = text.replace(PHONE_REGEX, '***-***-****');
       didFilter = true;
     }
 
-    if (EMAIL_REGEX.test(text)) {
-      snip = text.match(EMAIL_REGEX)?.[0] || 'Email Address';
+    const emailMatches = text.match(EMAIL_REGEX);
+    if (emailMatches) {
+      snippets.push(emailMatches[0]);
       text = text.replace(EMAIL_REGEX, '*******@****.***');
       didFilter = true;
     }
+    const snip = snippets.join(', ');
 
     const newMessage: ChatMessage = {
       id: `msg-${Date.now()}`,

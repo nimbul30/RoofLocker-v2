@@ -158,7 +158,7 @@ Once approved, the insurance carrier will issue a document called the "Scope of 
                           <ul key={index} className="list-disc pl-5 space-y-2 mt-2">
                             {paragraph.split('\n').map((line, lIdx) => (
                               <li key={lIdx} className="leading-relaxed">
-                                {line.replace(/^(\d+\.|\-)\s*/, '').trim()}
+                                {line.replace(/^(\d+\.|-)\s*/, '').trim()}
                               </li>
                             ))}
                           </ul>

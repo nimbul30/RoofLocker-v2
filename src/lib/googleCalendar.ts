@@ -7,6 +7,26 @@ export interface CalendarEventInput {
   type: 'video' | 'voice';
 }
 
+// Error carrying the HTTP status so callers can detect expired tokens (401)
+// and prompt the user to reconnect instead of failing silently.
+export class CalendarApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'CalendarApiError';
+    this.status = status;
+  }
+}
+
+async function throwApiError(response: Response, fallback: string): Promise<never> {
+  const errorData = await response.json().catch(() => ({}));
+  throw new CalendarApiError(
+    errorData.error?.message || `${fallback}: ${response.statusText}`,
+    response.status
+  );
+}
+
 export async function createCalendarEvent(accessToken: string, input: CalendarEventInput) {
   const event = {
     summary: input.summary,
@@ -39,8 +59,7 @@ export async function createCalendarEvent(accessToken: string, input: CalendarEv
   );
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to create calendar event: ${response.statusText}`);
+    await throwApiError(response, 'Failed to create calendar event');
   }
 
   return response.json();
@@ -60,8 +79,7 @@ export async function listCalendarEvents(accessToken: string) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Failed to fetch calendar events: ${response.statusText}`);
+    await throwApiError(response, 'Failed to fetch calendar events');
   }
 
   const data = await response.json();
